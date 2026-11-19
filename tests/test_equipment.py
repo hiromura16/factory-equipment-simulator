@@ -1,3 +1,5 @@
+"""一時的なループバックサーバーで設備プロトコルの実通信を検証する。"""
+
 import asyncio
 import socket
 import struct
@@ -10,29 +12,51 @@ from equipment import EquipmentDriver
 
 
 def port():
+    """OSが割り当てたループバックポート番号を返す。
+
+    ソケットは関数内で閉じるため、呼び出し先が使うまでの予約は
+    保証しない。
+    """
     with socket.socket() as s:
         s.bind(("127.0.0.1", 0))
         return s.getsockname()[1]
 
 
 def test_actual_opcua_and_modbus_read_subscribe_and_readonly(tmp_path):
+    """OPC UAとModbus TCPで実際に値を読み出す。
+
+    OPC UAの購読通知と書込み禁止、Modbusのアドレス別の値・
+    バイト順・書込み拒否を確かめる。
+    """
     from asyncua import Client
     from pymodbus.client import AsyncModbusTcpClient
 
     async def run():
+        """稼働中のドライバーを手動で進め、実通信で値を照合する。
+
+        クライアントから読み出したレジスター値を生成値と比較する。
+        途中で検証に失敗してもドライバーの終了を試みる。
+        """
         store = Store(tmp_path)
         c = Controller("equipment", store)
         c.spec = Spec()
         c.spec.equipment.devices = 1
         c.spec.generator.fields.append(
             FieldRule(
-                name="active", data_type="boolean", generator="constant", value=True
+                name="active",
+                data_type="boolean",
+                generator="constant",
+                value=True,
             )
         )
         c.spec.equipment.registers.extend(
             [
-                Register(field="active", area="coil", address=3, encoding="bool"),
-                Register(field="active", area="discrete", address=9, encoding="bool"),
+                Register(
+                    field="active", area="coil", address=3, encoding="bool"
+                ),
+                Register(
+                    field="active", area="discrete", address=9, encoding="bool"
+                ),
                 Register(field="value", area="input", address=10),
             ]
         )
@@ -52,7 +76,10 @@ def test_actual_opcua_and_modbus_read_subscribe_and_readonly(tmp_path):
                 received = []
 
                 class H:
+                    """購読ライブラリーが値変更を通知するための受け口を実装する。"""
+
                     def datachange_notification(self, node, value, data):
+                        """通知された値を外側のリストへ追加して検証に渡す。"""
                         received.append(value)
 
                 sub = await client.create_subscription(50, H())
@@ -76,7 +103,9 @@ def test_actual_opcua_and_modbus_read_subscribe_and_readonly(tmp_path):
             inputs = await mc.read_input_registers(10, count=2, device_id=1)
             assert not coil.isError() and coil.bits[0] is True
             assert not discrete.isError() and discrete.bits[0] is True
-            assert not inputs.isError() and inputs.registers == result.registers
+            assert (
+                not inputs.isError() and inputs.registers == result.registers
+            )
             denied = await mc.write_register(0, 1, device_id=1)
             assert denied.isError()
             mc.close()
@@ -89,6 +118,11 @@ def test_actual_opcua_and_modbus_read_subscribe_and_readonly(tmp_path):
 def test_opcua_username_requires_trusted_certificate_and_encrypted_channel(
     tmp_path, monkeypatch
 ):
+    """信頼済みの一時証明書とユーザー情報で暗号化接続を検証する。
+
+    証明書を一時ディレクトリに作成し、署名・暗号化を有効にした
+    OPC UAで値を読めることを確認する。
+    """
     from cryptography import x509
     from cryptography.x509.oid import NameOID, ExtendedKeyUsageOID
     from cryptography.hazmat.primitives.asymmetric import rsa
@@ -102,6 +136,11 @@ def test_opcua_username_requires_trusted_certificate_and_encrypted_channel(
     monkeypatch.setenv("CONNECTION_FILES_DIR", str(folder))
 
     def certificate(name, uri):
+        """指定された名前とURIで試験用の自己署名証明書を作る。
+
+        証明書と秘密鍵をPEM形式で一時ディレクトリに書き出す。
+        この未暗号化の鍵ファイルは試験用であり、実運用には使わない。
+        """
         key = rsa.generate_private_key(public_exponent=65537, key_size=2048)
         subject = x509.Name([x509.NameAttribute(NameOID.COMMON_NAME, name)])
         now = datetime.now(timezone.utc)
@@ -115,13 +154,19 @@ def test_opcua_username_requires_trusted_certificate_and_encrypted_channel(
             .not_valid_after(now + timedelta(days=1))
             .add_extension(
                 x509.SubjectAlternativeName(
-                    [x509.UniformResourceIdentifier(uri), x509.DNSName("localhost")]
+                    [
+                        x509.UniformResourceIdentifier(uri),
+                        x509.DNSName("localhost"),
+                    ]
                 ),
                 False,
             )
             .add_extension(
                 x509.ExtendedKeyUsage(
-                    [ExtendedKeyUsageOID.CLIENT_AUTH, ExtendedKeyUsageOID.SERVER_AUTH]
+                    [
+                        ExtendedKeyUsageOID.CLIENT_AUTH,
+                        ExtendedKeyUsageOID.SERVER_AUTH,
+                    ]
                 ),
                 False,
             )
@@ -142,6 +187,11 @@ def test_opcua_username_requires_trusted_certificate_and_encrypted_channel(
     certificate("client", "urn:test:client")
 
     async def run():
+        """試験用サーバーとクライアントに証明書を設定して接続する。
+
+        信頼リスト・ユーザー情報・暗号化方式を指定する。接続後に
+        設備値を読み出し、成功・失敗にかかわらずサーバーを閉じる。
+        """
         store = Store(tmp_path / "secure")
         c = Controller("equipment", store)
         c.spec = Spec()
@@ -161,7 +211,9 @@ def test_opcua_username_requires_trusted_certificate_and_encrypted_channel(
         d = EquipmentDriver(c)
         await d.start()
         try:
-            client = Client(f"opc.tcp://127.0.0.1:{c.profile.opc_port}/factory/")
+            client = Client(
+                f"opc.tcp://127.0.0.1:{c.profile.opc_port}/factory/"
+            )
             client.application_uri = "urn:test:client"
             client.set_user("reader")
             client.set_password("secure-test-password")
@@ -174,7 +226,9 @@ def test_opcua_username_requires_trusted_certificate_and_encrypted_channel(
             async with client:
                 ns = await client.get_namespace_index(c.profile.namespace_uri)
                 assert isinstance(
-                    await client.get_node(f"ns={ns};s=Device001.value").read_value(),
+                    await client.get_node(
+                        f"ns={ns};s=Device001.value"
+                    ).read_value(),
                     float,
                 )
         finally:
