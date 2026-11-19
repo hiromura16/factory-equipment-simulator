@@ -1,5 +1,7 @@
 # 設備サーバー模擬 / OPC UA・Modbus TCP
 
+[コードの読み方とデータの流れ（日本語解説）](docs/code-reading-guide.md)
+
 設備を読み取る収集クライアントのための実サーバーです。OPC UAのread・data change subscriptionと、Modbus TCPのFC1/2/3/4を実装。設定により書き込みも許可できます。
 
 - OPC UA: `opc.tcp://HOST:3645/factory/`、namespace URI `urn:factory:equipment:simulator`、例 `ns=1;s=Device001.value`。namespace indexはURIから取得してください。
