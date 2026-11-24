@@ -59,6 +59,15 @@
           <div class="card">
             <h3>プレビュー / 結果</h3>
             <div id="previewTable" class="table-scroll"></div>
+            <section id="protocolMapping" hidden>
+              <h4>設備1の初期値と読取マッピング</h4>
+              <p>開始直前の合成値です。プロトコルは起動しません。Modbusのアドレスは0始まり、OPC UAの名前空間番号は接続後に解決してください。</p>
+              <div id="registerPreview" class="table-scroll"></div>
+              <details>
+                <summary>OPC UAの文字列NodeId</summary>
+                <pre id="opcPreview"></pre>
+              </details>
+            </section>
             <details>
               <summary>JSONの詳細</summary>
               <pre id="result"></pre>

@@ -479,12 +479,20 @@ def create_app(kind):
                     row["_formatted_log"] = driver.log_message(row, offset)
             records.append(row)
             hits.append(trace)
+        mapping = {}
+        if kind == "equipment":
+            from equipment import preview_protocol_mapping
+
+            mapping["protocol_mapping"] = preview_protocol_mapping(
+                spec.equipment, spec.generator.fields, records[0]
+            )
         return {
             "records": records,
             "anomaly_hits": hits,
             "sequences": offsets,
             "writes": False,
             "validated_spec": spec.model_dump(mode="json"),
+            **mapping,
         }
 
     # 設定をコントローラーへ渡してバックグラウンド実行を開始する。

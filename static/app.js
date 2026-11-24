@@ -361,7 +361,17 @@ function control(
   return box;
 }
 /* 生成設定の編集領域を現在specから作り直す。DOMのみ置き換え、サーバーへ保存しない。 */
+// 設定編集中は、以前のサンプルを現在の設定として見せない。
+let previewRevision = 0;
+function invalidatePreview() {
+  previewRevision++;
+  $("#protocolMapping").hidden = true;
+  $("#previewTable").replaceChildren();
+  $("#result").textContent = "";
+}
+
 function render() {
+  invalidatePreview();
   const target = $("#editor");
   target.replaceChildren();
   const area = el("div", { class: "card grid" });
@@ -565,6 +575,8 @@ async function init() {
           tab(x.dataset.tab)),
     );
   $("#presetSelect").onchange = description;
+  for (const event of ["input", "change"])
+    $("#specForm").addEventListener(event, invalidatePreview);
   action(
     "#loadPreset",
     /* 選択プリセットを複製して編集欄へ読み込む。開始要求は送らないので、実行中の設定はここでは変えない。 */ () => {
@@ -582,7 +594,10 @@ async function init() {
     "#preview",
     /* フォーム検証後にプレビュー要求を送り、レコード・異常注入結果・応答JSONを表示する。実際の開始要求は行わない。 */ async () => {
       validated("#specForm");
+      const draft = JSON.stringify(spec);
+      const revision = previewRevision;
       const v = await api("/api/preview", spec);
+      if (revision !== previewRevision || draft !== JSON.stringify(spec)) return;
       table(
         $("#previewTable"),
         v.records.map(
@@ -595,6 +610,15 @@ async function init() {
           }),
         ),
       );
+      const mapping = v.protocol_mapping;
+      if (mapping) {
+        $("#protocolMapping").hidden = false;
+        table($("#registerPreview"), mapping.modbus_registers.map((item) => ({
+          項目: item.field, 領域: item.area, アドレス: item.address,
+          形式: item.encoding, 値: item.values, 結果: item.status,
+        })));
+        $("#opcPreview").textContent = mapping.opc_ua_identifiers.join("\n");
+      }
       $("#result").textContent = JSON.stringify(v, null, 2);
       notice("プレビューしました。書き込み・公開・送信はしていません。");
     },
