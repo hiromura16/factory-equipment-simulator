@@ -39,6 +39,32 @@ def encode_register(value, mapping):
     return [int.from_bytes(w, "big") for w in words]
 
 
+def preview_protocol_mapping(options, fields, sample):
+    """設備1の先頭生成値を変換する。待受・読み取り・書き込みは行わない。"""
+    registers = []
+    for mapping in options.registers:
+        result = {
+            "field": mapping.field,
+            "area": mapping.area,
+            "address": mapping.address,
+            "encoding": mapping.encoding,
+        }
+        try:
+            result["values"] = encode_register(sample.get(mapping.field), mapping)
+            result["status"] = "変換成功"
+        except (ValueError, TypeError, OverflowError, struct.error):
+            result["values"] = None
+            result["status"] = "欠測・型または範囲を確認"
+        registers.append(result)
+    return {
+        "device_id": 1,
+        "opc_ua_identifiers": [
+            f"Device001.{field.name}" for field in fields
+        ],
+        "modbus_registers": registers,
+    }
+
+
 class EquipmentDriver:
     """生成した設備状態をOPC UAとModbus TCPの両方へ公開する。"""
 
