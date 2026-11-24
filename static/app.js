@@ -372,6 +372,7 @@ function invalidatePreview() {
 
 function render() {
   const root = info.schemas.spec;
+  root.$defs.Register.properties.address.title = "アドレス（0始まり）";
   const { profile_id: profileField, ...options } = root.properties;
   const basics = $("#basicEditor");
   const advanced = $("#editor");
@@ -386,7 +387,19 @@ function render() {
   object(basics, { properties: {
     devices: { ...devices, title: "設備の台数" },
   } }, spec.equipment, root);
-  options.equipment = { ...section, title: "設備・レジスターの設定", properties: sectionOptions };
+  const labels = {
+    registers: "データ項目とModbusレジスターの対応",
+    quality_from_tick: "品質コードを変える開始周期",
+    quality_until_tick: "品質コードを戻す周期",
+    offline_from_tick: "公開を停止する開始周期",
+    offline_ticks: "公開停止を続ける周期数",
+    read_delay_ms: "応答の遅延（ms）",
+    writable: "書き込みを許可",
+  };
+  const fields = Object.fromEntries(Object.entries(sectionOptions).map(
+    ([key, option]) => [key, labels[key] ? { ...option, title: labels[key] } : option],
+  ));
+  options.equipment = { ...section, title: "設備・レジスターの設定", properties: fields };
   object(advanced, { properties: options }, spec, root);
   $("#editingPreset").textContent = "編集中の設定: " + (spec.name || "名称未設定");
   $("#previewResults").hidden = true;
@@ -430,7 +443,11 @@ function description() {
     /* 現在選択中のプリセットIDと一致する要素を探す。 */ (p) =>
       p.id === $("#presetSelect").value,
   );
-  $("#presetDetails").textContent = p?.spec.description || "";
+  const parts = (p?.spec.description || "").trim().split(/\r?\n\s*\r?\n/);
+  const scenario = parts.shift()?.replace(/^【想定(?:する状況)?】\s*/, "").trim();
+  $("#presetScenario").textContent = scenario || "このひな型には状況の説明がありません。";
+  $("#presetDetails").textContent = parts.join("\n\n");
+  $("#presetDetailsPanel").hidden = parts.length === 0;
 }
 /* フォーム内の制約違反を探す。該当箇所のdetailsを開いてブラウザーの検証表示を出し、例外で後続操作を止める。 */
 function validated(
@@ -677,12 +694,16 @@ async function init() {
     /* フォーム検証後のspecを整形JSON欄へ転記してJSONタブを開く。 */ () => {
       validated("#specForm");
       $("#jsonText").value = JSON.stringify(spec, null, 2);
+      $("#presetId").value = "";
+      $("#presetDisplayName").value = "";
+      $("#presetPurpose").value = "";
       tab("json");
+      $("#presetId").focus();
     },
   );
   /* JSON欄を解析してプレビューAPIで検証し、正規化された設定を返す。JSON構文・API検証エラーは呼出側へ伝える。 */
-  async function fromJson() {
-    return (await api("/api/preview", JSON.parse($("#jsonText").value))).validated_spec;
+  async function fromJson(draft = JSON.parse($("#jsonText").value)) {
+    return (await api("/api/preview", draft)).validated_spec;
   }
   action(
     "#applyJson",
@@ -699,9 +720,17 @@ async function init() {
       const id = $("#presetId").value;
       if (!/^[A-Za-z0-9_-]{1,64}$/.test(id))
         throw new Error("プリセットIDを確認してください");
-      spec = await fromJson();
+      const draft = JSON.parse($("#jsonText").value);
+      const displayName = $("#presetDisplayName").value.trim();
+      const purpose = $("#presetPurpose").value.trim();
+      if (displayName) draft.name = displayName;
+      if (purpose) draft.description = purpose;
+      spec = await fromJson(draft);
       await api("/api/presets/" + id, spec);
+      $("#jsonText").value = JSON.stringify(spec, null, 2);
       await refresh();
+      $("#presetSelect").value = id;
+      description();
       render();
       notice("プリセットを保存しました。");
     },

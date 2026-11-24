@@ -602,7 +602,7 @@ def build(kind, path):
                 conditions += [
                     f"tick {o.quality_from_tick}〜{o.quality_until_tick}でOPC品質を{o.quality}に変更。"
                 ]
-            if o.offline_ticks:
+            if o.offline_from_tick and o.offline_ticks:
                 conditions += [
                     f"tick {o.offline_from_tick}から{o.offline_ticks}tickの間、両リスナーを停止して再開。"
                 ]

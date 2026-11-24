@@ -14,6 +14,8 @@ OPC UAのAlarms & Conditions、Historical Access、実機PLC制御、SECS/GEMは
 
 ## 操作ガイド
 
+[ひな型の選び方・詳細設定の画面・自分のひな型の作り方](docs/preset-guide.md)
+
 [![設備台数と読取マッピング、OPC UAとModbusの公開開始を示す設備画面。青い枠は詳細設定。](docs/images/operation-guide.png)](docs/images/operation-guide.png)
 
 1. 試したい設備のひな型を選び、「ひな型を読み込む」を押します。

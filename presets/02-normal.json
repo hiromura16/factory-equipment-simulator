@@ -1,7 +1,7 @@
 {
   "version": 1,
   "name": "正常 / OPC UAのみ",
-  "description": "【想定】\n設備を読み出し・購読する収集クライアントの検証。OPC UAのみを想定。\n\n【生成内容・条件】\n更新周期1000ms、最大tick数無制限。\n4設備を公開。プロファイルはopc-only。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。\nvalue: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。\nsequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。\nstatus: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。\ntick 0から5tickの間、両リスナーを停止して再開。\n\n【確認事項】\nOPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。\n書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。\n\n【実行前】\n公開・認証・送信先は別のプロファイルで指定し、保存後に停止・開始して適用。各条件はフォームとJSONで編集可能。",
+  "description": "【想定】\n設備を読み出し・購読する収集クライアントの検証。OPC UAのみを想定。\n\n【生成内容・条件】\n更新周期1000ms、最大tick数無制限。\n4設備を公開。プロファイルはopc-only。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。\nvalue: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。\nsequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。\nstatus: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。\n\n【確認事項】\nOPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。\n書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。\n\n【実行前】\n公開・認証・送信先は別のプロファイルで指定し、保存後に停止・開始して適用。各条件はフォームとJSONで編集可能。",
   "profile_id": "opc-only",
   "interval_ms": 1000,
   "batch_size": 5,

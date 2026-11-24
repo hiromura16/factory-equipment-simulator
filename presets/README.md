@@ -13,7 +13,6 @@
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -33,7 +32,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -53,7 +51,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -73,7 +70,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -93,7 +89,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 sequence_no: holding[10] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -113,7 +108,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=little。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -133,7 +127,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=little, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -154,7 +147,6 @@ value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
 active: coil[0] / bool / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -174,7 +166,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: input[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -194,7 +185,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -214,7 +204,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -234,7 +223,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 temperature: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -254,7 +242,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 項目valueへset、値=250を生成位置20〜79で適用。異常後の型検証を迂回=False。
 
 【確認事項】
@@ -275,7 +262,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 項目valueへramp、値=1を生成位置20〜79で適用。異常後の型検証を迂回=False。
 
 【確認事項】
@@ -296,7 +282,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 項目valueへfreeze、値=Noneを生成位置20〜79で適用。異常後の型検証を迂回=False。
 
 【確認事項】
@@ -317,7 +302,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 項目valueへnull、値=Noneを生成位置20〜79で適用。異常後の型検証を迂回=False。
 
 【確認事項】
@@ -338,7 +322,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 項目valueへset、値='SENSOR_ERROR'を生成位置20〜79で適用。異常後の型検証を迂回=True。
 
 【確認事項】
@@ -360,7 +343,6 @@ value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
 tick 5〜10でOPC品質をBadSensorFailureに変更。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -381,7 +363,6 @@ value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
 tick 5〜10でOPC品質をUncertainLastUsableValueに変更。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -421,7 +402,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 Modbusアクセスへ1500msの応答遅延を追加。
 
 【確認事項】
@@ -442,7 +422,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[10] / int16 / 倍率10000.0 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
@@ -462,7 +441,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 項目statusへset、値='UNKNOWN'を生成位置10〜以降で適用。異常後の型検証を迂回=False。
 
 【確認事項】
@@ -483,7 +461,6 @@ OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅�
 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。
 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。
 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。
-tick 0から5tickの間、両リスナーを停止して再開。
 
 【確認事項】
 OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。
