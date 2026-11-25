@@ -452,14 +452,17 @@ function description() {
 /* フォーム内の制約違反を探す。該当箇所のdetailsを開いてブラウザーの検証表示を出し、例外で後続操作を止める。 */
 function validated(
   selector,
+  showError = true,
 ) {
   for (const input of $(selector).querySelectorAll("input,select,textarea"))
     if (!input.checkValidity()) {
-      for (let details = input.closest("details"); details;
-        details = details.parentElement.closest("details")) {
-        details.open = true;
+      if (showError) {
+        for (let details = input.closest("details"); details;
+          details = details.parentElement.closest("details")) {
+          details.open = true;
+        }
+        input.reportValidity();
       }
-      input.reportValidity();
       throw new Error("入力を確認してください");
     }
 }
@@ -608,6 +611,28 @@ async function init() {
   render();
   profile = cleanProfile(profiles[0]);
   renderProfile();
+  window.FactoryComparison.mount({
+    app: "equipment-simulator",
+    listPresets: () => presets,
+    currentSpec: () => {
+      validated("#specForm", false);
+      return copy(spec);
+    },
+    preview: (candidate) => api("/api/preview", candidate),
+    metrics: (spec, data) => {
+      const destination = profiles.find((candidate) => candidate.id === spec.profile_id);
+      return {
+        "OPC UAの公開設定": destination ? (destination.opc_enabled ? "有効" : "無効") : null,
+        "Modbusの公開設定": destination ? (destination.modbus_enabled ? "有効" : "無効") : null,
+        "設備数": spec.equipment.devices,
+        "レジスター設定数": spec.equipment.registers.length,
+        "Modbus設定の最小アドレス": data.protocol_mapping?.modbus_registers?.length ? Math.min(...data.protocol_mapping.modbus_registers.map((row) => row.address)) : null,
+        "読取遅延（ms）": spec.equipment.read_delay_ms,
+        "通信停止を始める周期": spec.equipment.offline_from_tick,
+        "通信停止の長さ（周期数）": spec.equipment.offline_from_tick ? spec.equipment.offline_ticks : 0,
+      };
+    },
+  });
   document
     .querySelectorAll("[data-tab]")
     .forEach(
