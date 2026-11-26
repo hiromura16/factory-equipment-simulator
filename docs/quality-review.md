@@ -10,6 +10,7 @@
 | [#10 Modbus](https://github.com/hiromura16/factory-equipment-simulator/issues/10) | 読取要求と交差する番地を変換し、他の範囲への要求と分離。 | [資料またはテスト](user-manual.md) |
 | [#11 レジスター割当の項目名の誤り・型不一致が、見本でも開始時にも検出されない](https://github.com/hiromura16/factory-equipment-simulator/issues/11) | 参照している項目と型をプレビュー・保存・開始時に検証。 | [資料またはテスト](user-manual.md) |
 | [#12 製品品質レビュー](https://github.com/hiromura16/factory-equipment-simulator/issues/12) | マニュアル、ひな型・設定ガイド、AIハーネス、API、管理認証の導入、ライセンス、変更履歴、CIを整備。 | [資料またはテスト](user-manual.md) |
+| [#13 AIエージェントからの利用](https://github.com/hiromura16/factory-equipment-simulator/issues/13) | AI作業ルール、サーバー側の実行前確認、OpenAPIの項目説明、CLI、MCPを整備。 | [開発ルール](../AGENTS.md)・[CLI・MCP](mcp.md)・[回帰テスト](../tests/test_agent_clients.py) |
 
 構成例で接続先・ストレージ・認証を設定します。実運用先での配備と外部DBやブローカーの疎通は、各環境の運用手順に従って確認します。
 

@@ -15,7 +15,7 @@
     <a href="/">アプリに戻る</a>
   </div>
   <div class="help-layout">
-    <nav class="help-nav" aria-label="ヘルプ"><a href="/help/index.html">初めて使う</a><a href="/help/presets.html">ひな型を選ぶ・作る</a><a href="/help/templates.html">JSONの書き方</a><a href="/help/settings.html">設定リファレンス</a><a href="/help/api.html">APIの使い方</a><a href="/help/glossary.html">用語集</a><a href="/help/ai.html">AIにひな型を頼む</a><a href="/help/install.html">VMへの導入</a><a href="/help/catalog.html" aria-current="page">付属のひな型一覧</a></nav>
+    <nav class="help-nav" aria-label="ヘルプ"><a href="/help/index.html">初めて使う</a><a href="/help/presets.html">ひな型を選ぶ・作る</a><a href="/help/templates.html">JSONの書き方</a><a href="/help/settings.html">設定リファレンス</a><a href="/help/api.html">APIの使い方</a><a href="/help/glossary.html">用語集</a><a href="/help/ai.html">AIにひな型を頼む</a><a href="/help/mcp.html">CLI・MCP</a><a href="/help/install.html">VMへの導入</a><a href="/help/catalog.html" aria-current="page">付属のひな型一覧</a></nav>
     <main class="help-content" id="help-content">
       <nav class="help-outline" aria-label="このページ"><a href="#ひな型ごとの内容">ひな型ごとの内容</a></nav>
       <div class="help-search" hidden><label for="help-filter">表を検索</label><input id="help-filter" type="search" placeholder="日本語、ID、JSONキー"><p id="help-results" role="status"></p></div>
@@ -28,7 +28,7 @@
 <th>ID</th>
 <th>表示名</th>
 <th>最大tick数</th>
-<th>想定</th>
+<th>生成する内容</th>
 </tr>
 </thead>
 <tbody>
@@ -36,145 +36,145 @@
 <td><a href="#01-normal">01-normal</a></td>
 <td>正常 / 両プロトコル / 4設備</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。両プロトコル / 4設備を想定</td>
+<td>両プロトコル / 4設備を想定</td>
 </tr>
 <tr>
 <td><a href="#02-normal">02-normal</a></td>
 <td>正常 / OPC UAのみ</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。OPC UAのみを想定</td>
+<td>4設備を公開。プロファイルはopc-only。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用</td>
 </tr>
 <tr>
 <td><a href="#03-normal">03-normal</a></td>
 <td>正常 / Modbusのみ</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。Modbusのみを想定</td>
+<td>4設備を公開。プロファイルはmodbus-only。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用</td>
 </tr>
 <tr>
 <td><a href="#04-normal">04-normal</a></td>
 <td>正常 / 16設備 / 100ms更新</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。16設備 / 100ms更新を想定</td>
+<td>更新周期100ms、最大tick数無制限。 16設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用</td>
 </tr>
 <tr>
 <td><a href="#05-normal">05-normal</a></td>
 <td>正常 / 32bit整数のレジスター</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。32bit整数のレジスターを想定</td>
+<td>sequence_no: holding[10] / uint32 / 倍率1 / 加算0 / byte=big, word=big</td>
 </tr>
 <tr>
 <td><a href="#06-normal">06-normal</a></td>
 <td>正常 / ワード順を反転</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。ワード順を反転を想定</td>
+<td>value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=little</td>
 </tr>
 <tr>
 <td><a href="#07-normal">07-normal</a></td>
 <td>正常 / バイト順を反転</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。バイト順を反転を想定</td>
+<td>value: holding[0] / float32 / 倍率1 / 加算0 / byte=little, word=big</td>
 </tr>
 <tr>
 <td><a href="#08-normal">08-normal</a></td>
 <td>正常 / コイル / 真偽値</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。コイル / 真偽値を想定</td>
+<td>active: coil[0] / bool / 倍率1 / 加算0 / byte=big, word=big</td>
 </tr>
 <tr>
 <td><a href="#09-normal">09-normal</a></td>
 <td>正常 / 入力レジスター</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。入力レジスターを想定</td>
+<td>value: input[0] / float32 / 倍率1 / 加算0 / byte=big, word=big</td>
 </tr>
 <tr>
 <td><a href="#10-normal">10-normal</a></td>
 <td>正常 / クライアント書き込み</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。クライアント書き込みを想定</td>
+<td>クライアント書き込みを想定</td>
 </tr>
 <tr>
 <td><a href="#11-normal">11-normal</a></td>
 <td>正常 / 低速 / 5秒周期</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。低速 / 5秒周期を想定</td>
+<td>更新周期5000ms、最大tick数無制限</td>
 </tr>
 <tr>
 <td><a href="#12-normal">12-normal</a></td>
 <td>正常 / 独自のデータ項目</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。独自のデータ項目を想定</td>
+<td>temperature: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big</td>
 </tr>
 <tr>
 <td><a href="#13-anomaly">13-anomaly</a></td>
 <td>異常 / 突発値</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。突発値を想定</td>
+<td>項目valueへset、値=250を生成位置20〜79で適用。異常後の型検証を迂回=False</td>
 </tr>
 <tr>
 <td><a href="#14-anomaly">14-anomaly</a></td>
 <td>異常 / ドリフト</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。ドリフトを想定</td>
+<td>項目valueへramp、値=1を生成位置20〜79で適用。異常後の型検証を迂回=False</td>
 </tr>
 <tr>
 <td><a href="#15-anomaly">15-anomaly</a></td>
 <td>異常 / 固着</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。固着を想定</td>
+<td>項目valueへfreeze、値=Noneを生成位置20〜79で適用。異常後の型検証を迂回=False</td>
 </tr>
 <tr>
 <td><a href="#16-anomaly">16-anomaly</a></td>
 <td>異常 / 欠測</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。欠測を想定</td>
+<td>項目valueへnull、値=Noneを生成位置20〜79で適用。異常後の型検証を迂回=False</td>
 </tr>
 <tr>
 <td><a href="#17-anomaly">17-anomaly</a></td>
 <td>異常 / 不正な型</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。不正な型を想定</td>
+<td>項目valueへset、値='SENSOR_ERROR'を生成位置20〜79で適用。異常後の型検証を迂回=True</td>
 </tr>
 <tr>
 <td><a href="#18-anomaly">18-anomaly</a></td>
 <td>異常 / OPC Bad品質</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。OPC Bad品質を想定</td>
+<td>tick 5〜10でOPC品質をBadSensorFailureに変更</td>
 </tr>
 <tr>
 <td><a href="#19-anomaly">19-anomaly</a></td>
 <td>異常 / OPC Uncertain品質</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。OPC Uncertain品質を想定</td>
+<td>tick 5〜10でOPC品質をUncertainLastUsableValueに変更</td>
 </tr>
 <tr>
 <td><a href="#20-anomaly">20-anomaly</a></td>
 <td>異常 / 一時切断・復帰</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。一時切断・復帰を想定</td>
+<td>tick 5から5tickの間、両リスナーを停止して再開</td>
 </tr>
 <tr>
 <td><a href="#21-anomaly">21-anomaly</a></td>
 <td>異常 / Modbus応答遅延</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。Modbus応答遅延を想定</td>
+<td>Modbusアクセスへ1500msの応答遅延を追加</td>
 </tr>
 <tr>
 <td><a href="#22-anomaly">22-anomaly</a></td>
 <td>異常 / Modbus桁あふれ</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。Modbus桁あふれを想定</td>
+<td>value: holding[10] / int16 / 倍率10000.0 / 加算0 / byte=big, word=big</td>
 </tr>
 <tr>
 <td><a href="#23-anomaly">23-anomaly</a></td>
 <td>異常 / 未知の状態コード</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。未知の状態コードを想定</td>
+<td>項目statusへset、値='UNKNOWN'を生成位置10〜以降で適用。異常後の型検証を迂回=False</td>
 </tr>
 <tr>
 <td><a href="#24-anomaly">24-anomaly</a></td>
 <td>異常 / 更新停止に近い低速</td>
 <td>手動停止まで</td>
-<td>設備を読み出し・購読する収集クライアントの検証。更新停止に近い低速を想定</td>
+<td>更新周期60000ms、最大tick数無制限</td>
 </tr>
 </tbody>
 </table>
@@ -279,7 +279,7 @@
 <p><strong>異常 / 突発値</strong> · <a href="/help/preset-files/13-anomaly.json">JSONをダウンロード</a></p>
 <ul>
 <li><strong>想定</strong>　設備を読み出し・購読する収集クライアントの検証。突発値を想定。</li>
-<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへset、値=250を生成位置20〜79で適用。異常後の型検証を迂回=いいえ。</li>
+<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへset、値=250を生成位置20〜79で適用。異常後の型検証を迂回=False。</li>
 <li><strong>確認事項</strong>　OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。 書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。</li>
 <li><strong>実行前</strong>　公開・認証・送信先は別のプロファイルで指定し、保存後に停止・開始して適用。各条件はフォームとJSONで編集可能。</li>
 </ul>
@@ -287,7 +287,7 @@
 <p><strong>異常 / ドリフト</strong> · <a href="/help/preset-files/14-anomaly.json">JSONをダウンロード</a></p>
 <ul>
 <li><strong>想定</strong>　設備を読み出し・購読する収集クライアントの検証。ドリフトを想定。</li>
-<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへramp、値=1を生成位置20〜79で適用。異常後の型検証を迂回=いいえ。</li>
+<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへramp、値=1を生成位置20〜79で適用。異常後の型検証を迂回=False。</li>
 <li><strong>確認事項</strong>　OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。 書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。</li>
 <li><strong>実行前</strong>　公開・認証・送信先は別のプロファイルで指定し、保存後に停止・開始して適用。各条件はフォームとJSONで編集可能。</li>
 </ul>
@@ -295,7 +295,7 @@
 <p><strong>異常 / 固着</strong> · <a href="/help/preset-files/15-anomaly.json">JSONをダウンロード</a></p>
 <ul>
 <li><strong>想定</strong>　設備を読み出し・購読する収集クライアントの検証。固着を想定。</li>
-<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへfreeze、値=Noneを生成位置20〜79で適用。異常後の型検証を迂回=いいえ。</li>
+<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへfreeze、値=Noneを生成位置20〜79で適用。異常後の型検証を迂回=False。</li>
 <li><strong>確認事項</strong>　OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。 書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。</li>
 <li><strong>実行前</strong>　公開・認証・送信先は別のプロファイルで指定し、保存後に停止・開始して適用。各条件はフォームとJSONで編集可能。</li>
 </ul>
@@ -303,15 +303,15 @@
 <p><strong>異常 / 欠測</strong> · <a href="/help/preset-files/16-anomaly.json">JSONをダウンロード</a></p>
 <ul>
 <li><strong>想定</strong>　設備を読み出し・購読する収集クライアントの検証。欠測を想定。</li>
-<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへnull、値=Noneを生成位置20〜79で適用。異常後の型検証を迂回=いいえ。</li>
-<li><strong>確認事項</strong>　OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。 書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。</li>
+<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへnull、値=Noneを生成位置20〜79で適用。異常後の型検証を迂回=False。</li>
+<li><strong>確認事項</strong>　OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。 書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。 Modbusでは、欠測または未知の状態で変換できない番地を含む読取要求は例外4を返します。他の番地だけを対象とする要求は引き続き読み取れます。</li>
 <li><strong>実行前</strong>　公開・認証・送信先は別のプロファイルで指定し、保存後に停止・開始して適用。各条件はフォームとJSONで編集可能。</li>
 </ul>
 <h3 id="17-anomaly">17-anomaly</h3>
 <p><strong>異常 / 不正な型</strong> · <a href="/help/preset-files/17-anomaly.json">JSONをダウンロード</a></p>
 <ul>
 <li><strong>想定</strong>　設備を読み出し・購読する収集クライアントの検証。不正な型を想定。</li>
-<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへset、値='SENSOR_ERROR'を生成位置20〜79で適用。異常後の型検証を迂回=はい。</li>
+<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目valueへset、値='SENSOR_ERROR'を生成位置20〜79で適用。異常後の型検証を迂回=True。</li>
 <li><strong>確認事項</strong>　OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。 書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。</li>
 <li><strong>実行前</strong>　公開・認証・送信先は別のプロファイルで指定し、保存後に停止・開始して適用。各条件はフォームとJSONで編集可能。</li>
 </ul>
@@ -359,8 +359,8 @@
 <p><strong>異常 / 未知の状態コード</strong> · <a href="/help/preset-files/23-anomaly.json">JSONをダウンロード</a></p>
 <ul>
 <li><strong>想定</strong>　設備を読み出し・購読する収集クライアントの検証。未知の状態コードを想定。</li>
-<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目statusへset、値='UNKNOWN'を生成位置10〜以降で適用。異常後の型検証を迂回=いいえ。</li>
-<li><strong>確認事項</strong>　OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。 書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。</li>
+<li><strong>生成内容・条件</strong>　更新周期1000ms、最大tick数無制限。 4設備を公開。プロファイルはdefault。OPC UAは生成項目ごとのNodeId、Modbusは0始まりのアドレスを使用。 value: holding[0] / float32 / 倍率1 / 加算0 / byte=big, word=big。 sequence_no: holding[2] / uint32 / 倍率1 / 加算0 / byte=big, word=big。 status: holding[4] / uint16 / 倍率1 / 加算0 / byte=big, word=big。 項目statusへset、値='UNKNOWN'を生成位置10〜以降で適用。異常後の型検証を迂回=False。</li>
+<li><strong>確認事項</strong>　OPC UAは値・StatusCode・購読通知、Modbusは領域・レジスター幅・符号・倍率・順序を照合。 書き込み許可時も次の生成tickで値を更新。数値の桁あふれはModbusのエラー応答を確認。 Modbusでは、欠測または未知の状態で変換できない番地を含む読取要求は例外4を返します。他の番地だけを対象とする要求は引き続き読み取れます。</li>
 <li><strong>実行前</strong>　公開・認証・送信先は別のプロファイルで指定し、保存後に停止・開始して適用。各条件はフォームとJSONで編集可能。</li>
 </ul>
 <h3 id="24-anomaly">24-anomaly</h3>

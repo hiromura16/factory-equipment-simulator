@@ -23,8 +23,10 @@ from pydantic import BaseModel, Field
 from validation import validate_source_spec
 from models import Profile, Spec, TITLES, SECRETS
 from config import ConfigurationError
+from generation import anomaly_warnings
 from generation import generate_record, sample_offsets
 from store import Store
+from operation_confirmation import CONFIRMATION_HEADER, install_operation_gate
 from api_support import (
     install_error_handlers, install_help,
     management_credentials, unauthorized_management,
@@ -343,6 +345,22 @@ def create_app(kind):
     app.mount("/static", StaticFiles(directory=root / "static"), name="static")
     install_help(app, root, True, kind, credentials)
 
+    def validate_equipment_spec(spec, revision=None):
+        """指定した設定版で利用する公開方式に合わせて対応を検証する。"""
+        try:
+            profile, _ = store.profile(spec.profile_id, revision)
+        except KeyError:
+            # Editing can start before the profile is saved.
+            modbus_enabled = True
+        else:
+            modbus_enabled = profile.modbus_enabled
+        validate_source_spec(kind, spec, modbus_enabled=modbus_enabled)
+        return modbus_enabled
+
+    gate = install_operation_gate(
+        app, kind, store, Spec, validate=validate_equipment_spec
+    )
+
     # 静的な管理画面の入口を返す。
     @app.get("/", include_in_schema=False)
     def index():
@@ -469,18 +487,6 @@ def create_app(kind):
         return {"presets": store.presets()}
 
     # 指定IDのプリセットを検証済み設定で保存する。
-    def validate_equipment_preview(spec):
-        """現在の公開方式で必要な対応だけを検証する。"""
-        try:
-            profile, _ = store.profile(spec.profile_id)
-        except KeyError:
-            # Editing can start before the profile is saved.
-            modbus_enabled = True
-        else:
-            modbus_enabled = profile.modbus_enabled
-        validate_source_spec(kind, spec, modbus_enabled=modbus_enabled)
-        return modbus_enabled
-
     @app.post(
         "/api/presets/{identity}",
         summary='ひな型を保存',
@@ -490,7 +496,7 @@ def create_app(kind):
         """IDは英数字・下線・ハイフンで64文字以内です。JSONを検証し、同じIDならひな型を更新します。"""
         if not re.fullmatch(r"[A-Za-z0-9_-]{1,64}", identity):
             raise HTTPException(422, "プリセットIDを確認してください")
-        validate_equipment_preview(spec)
+        validate_equipment_spec(spec)
         return store.save_preset(identity, spec)
 
     # 境界サンプルを生成し、実行を始めずにデータと異常の影響を確認する。
@@ -501,7 +507,7 @@ def create_app(kind):
     )
     def preview(spec: Spec):
         """入力を検証し、先頭や異常条件の境界で合成した値を records に返します。writes は false です。実行先へ出力しません。"""
-        modbus_enabled = validate_equipment_preview(spec)
+        modbus_enabled = validate_equipment_spec(spec)
         offsets = sorted({0, 1, 2, *sample_offsets(spec.generator)})[:12]
         records = []
         hits = []
@@ -536,6 +542,7 @@ def create_app(kind):
         return {
             "records": records,
             "anomaly_hits": hits,
+            "warnings": anomaly_warnings(spec.generator, prefix=("generator",)),
             "sequences": offsets,
             "writes": False,
             "validated_spec": spec.model_dump(mode="json"),
@@ -550,10 +557,13 @@ def create_app(kind):
         tags=['実行・出力'],
         responses={409: {'description': 'すでに実行中です'}},
     )
-    def start(spec: Spec):
+    def start(request: Request, spec: Spec):
         """設定を確定しバックグラウンドに開始を依頼します。現在の状態は GET /api/state で確認します。"""
         try:
-            return controller.start(spec)
+            operation = gate.assess("/api/start", spec)
+            validate_equipment_spec(spec, revision=operation.revision)
+            gate.require(operation, request.headers.get(CONFIRMATION_HEADER))
+            return controller.start(spec, revision=operation.revision)
         except RuntimeError as e:
             raise HTTPException(409, str(e)) from None
 
