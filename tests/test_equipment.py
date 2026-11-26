@@ -235,3 +235,42 @@ def test_opcua_username_requires_trusted_certificate_and_encrypted_channel(
             await d.close()
 
     asyncio.run(run())
+
+
+@pytest.mark.parametrize("bad_value", [None, "outside-enum"])
+def test_invalid_modbus_mapping_isolated_to_its_register(tmp_path, bad_value):
+    """実クライアントで欠測と列挙値外の障害が周囲に波及しないことを確認する。"""
+    from pymodbus.client import AsyncModbusTcpClient
+    from pymodbus.constants import ExcCodes
+
+    async def run():
+        c = Controller("equipment", Store(tmp_path))
+        c.spec = Spec()
+        c.spec.equipment.devices = 1
+        c.profile = Profile(opc_enabled=False, modbus_port=port())
+        driver = EquipmentDriver(c)
+        await driver.start()
+        client = AsyncModbusTcpClient("127.0.0.1", port=c.profile.modbus_port)
+        try:
+            assert await client.connect()
+            driver.values[1].update(value=12.5, sequence_no=55, status=bad_value)
+            for _ in range(3):
+                value = await client.read_holding_registers(0, count=2, device_id=1)
+                assert not value.isError()
+                assert value.registers == [0x4148, 0]
+                partial = await client.read_holding_registers(1, count=1, device_id=1)
+                assert not partial.isError() and partial.registers == [0]
+                counter = await client.read_holding_registers(2, count=2, device_id=1)
+                assert not counter.isError() and counter.registers == [0, 55]
+                bad = await client.read_holding_registers(4, count=1, device_id=1)
+                assert bad.isError() and bad.exception_code == ExcCodes.DEVICE_FAILURE
+                overlapping = await client.read_holding_registers(3, count=2, device_id=1)
+                assert overlapping.isError() and overlapping.exception_code == ExcCodes.DEVICE_FAILURE
+            driver.values[1]["status"] = "warning"
+            recovered = await client.read_holding_registers(4, count=1, device_id=1)
+            assert not recovered.isError() and recovered.registers == [1]
+        finally:
+            client.close()
+            await driver.close()
+
+    asyncio.run(run())
