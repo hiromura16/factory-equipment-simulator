@@ -1,0 +1,90 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>初めて使う | 設備シミュレーター</title>
+  <link rel="stylesheet" href="/static/style.css">
+  <link rel="stylesheet" href="/static/help.css">
+  <script src="/static/help.js" defer></script>
+</head>
+<body class="help-page">
+  <a class="help-skip" href="#help-content">本文へ移動</a>
+  <div class="help-top">
+    <a class="help-home" href="/">設備シミュレーター</a>
+    <a href="/">アプリに戻る</a>
+  </div>
+  <div class="help-layout">
+    <nav class="help-nav" aria-label="ヘルプ"><a href="/help/index.html" aria-current="page">初めて使う</a><a href="/help/presets.html">ひな型を選ぶ・作る</a><a href="/help/templates.html">JSONの書き方</a><a href="/help/settings.html">設定リファレンス</a><a href="/help/api.html">APIの使い方</a><a href="/help/glossary.html">用語集</a><a href="/help/ai.html">AIにひな型を頼む</a><a href="/help/install.html">VMへの導入</a><a href="/help/catalog.html">付属のひな型一覧</a></nav>
+    <main class="help-content" id="help-content">
+      <nav class="help-outline" aria-label="このページ"><a href="#最初に試すこと">最初に試すこと</a><a href="#よくある質問">よくある質問</a><a href="#停止と再起動">停止と再起動</a><a href="#想定した結果が出ないとき">想定した結果が出ないとき</a><a href="#通信番地の読み方">通信番地の読み方</a><a href="#次に読む">次に読む</a></nav>
+      <article><h1>設備シミュレーター 操作マニュアル</h1>
+<p>OPC UAクライアントやModbus TCPポーラーが設備の値を読み取れるか検証します。設備の疑似値を周期更新し、収集側が接続して読み取る方式です。</p>
+<h2 id="最初に試すこと">最初に試すこと</h2>
+<p><strong>設備の値をModbus TCPかOPC UAで1項目読む</strong>。見本に出たレジスターまたはノードから、収集クライアントで疑似値を取得できます。</p>
+<p><a href="/help/install.html">Docker Compose導入手順</a>で準備し、VMで <code>http://127.0.0.1:3640/</code> を開きます。</p>
+<p>Modbusのレジスターは値の番地、OPC UAのノードは値や設備を識別する項目です。接続手順を切り分けるには、片方のプロトコルから始めます。</p>
+<ol>
+<li>「基本設定」で「正常 / 両プロトコル / 4設備」のひな型を読み込みます。「公開・出力設定」で最初に試す公開方式を確認します。</li>
+<li>「読取マッピングを見る」を押し、読みたい行のModbusアドレス、またはOPC UAノードIDを控えます。Modbusの値が複数ワードの場合は「詳細設定」でワード順も確認します。</li>
+<li>「設備の公開を開始」を押します。「実行状況・取得方法」でアドレス、Modbusの端末ID、OPC UAのnamespace URIを確認し、手元の収集クライアントで1項目を読みます。</li>
+<li>試験が終わったら「実行状況・取得方法」で停止します。停止後はリスナーの提供も終わります。</li>
+</ol>
+<p><a href="/help/images/operation-guide.png"><img src="/help/images/operation-guide.png" alt="最初の操作と確認箇所" loading="lazy" /></a></p>
+<h2 id="よくある質問">よくある質問</h2>
+<h3 id="modbusの4xxxx表記をそのまま使えますか">Modbusの4xxxx表記をそのまま使えますか？</h3>
+<p>画面のアドレスは0始まりです。クライアントが4xxxx表記を使う場合は、そのクライアントの入力方式を確認します。</p>
+<h3 id="web画面が開くのに設備の値を読めません">Web画面が開くのに設備の値を読めません</h3>
+<p>公開ボタンを押したか、選択したプロトコル、公開ポート、接続元からの経路を確認します。</p>
+<h3 id="opc-uaでnamespaceの番号が違います">OPC UAでnamespaceの番号が違います</h3>
+<p>クライアントでnamespace URIから番号を解決して、見本のノードを指定します。</p>
+<h2 id="停止と再起動">停止と再起動</h2>
+<p>「実行状況・取得方法」で停止します。起動直後は待機し、ポートの公開設定があってもデータを返すリスナーは手動開始を待ちます。</p>
+<h2 id="想定した結果が出ないとき">想定した結果が出ないとき</h2>
+<p>Modbusクライアントの4xxxx表記と0始まりアドレスを照合してください。OPC UAでnamespaceの番号が変わる場合はURIからクライアントで解決します。</p>
+<h2 id="通信番地の読み方">通信番地の読み方</h2>
+<table>
+<thead>
+<tr>
+<th>例</th>
+<th>値の位置</th>
+<th>クライアントで照合すること</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>OPC UA</td>
+<td>公開後のnamespace URIと見本のノードID</td>
+<td>アプリの表示とクライアントで解決した番号を照合します。</td>
+</tr>
+<tr>
+<td>Modbus Holding Register 0</td>
+<td>0始まりのワード番地</td>
+<td>40001を起点にするクライアントでは0番地に対応します。</td>
+</tr>
+<tr>
+<td>float32を番地0から配置</td>
+<td>0番地と1番地に1語ずつ</td>
+<td>読取語数2、バイト順、ワード順を照合します。</td>
+</tr>
+<tr>
+<td>値が欠測・未知のenum</td>
+<td>その数値割当を含む要求が例外4になります。</td>
+<td>別の番地への要求と分けて、障害と復旧を確認します。</td>
+</tr>
+</tbody>
+</table>
+<p>OPC UAのみを使う場合は、公開設定でModbusを無効にします。</p>
+<h2 id="次に読む">次に読む</h2>
+<ul>
+<li><a href="/help/presets.html">ひな型を選ぶ・作る</a></li>
+<li><a href="/help/settings.html">設定リファレンス</a></li>
+<li><a href="/help/templates.html">JSONの書き方</a></li>
+<li><a href="/help/api.html">APIの使い方</a></li>
+<li><a href="/help/glossary.html">用語集</a></li>
+</ul>
+</article>
+    </main>
+  </div>
+</body>
+</html>

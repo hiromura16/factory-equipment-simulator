@@ -9,6 +9,9 @@ from datetime import datetime, timezone
 from connection_security import connection_file
 
 
+REGISTER_WIDTHS = {"uint32": 2, "int32": 2, "float32": 2, "float64": 4}
+
+
 def encode_register(value, mapping):
     """列挙値・倍率・オフセットを反映し、指定バイト順のレジスター値へ変換する。
 
@@ -226,12 +229,7 @@ class EquipmentDriver:
                     for mapping in options.registers:
                         if mapping.area != area:
                             continue
-                        width = {
-                            "uint32": 2,
-                            "int32": 2,
-                            "float32": 2,
-                            "float64": 4,
-                        }.get(mapping.encoding, 1)
+                        width = REGISTER_WIDTHS.get(mapping.encoding, 1)
                         entries.append(
                             SimData(
                                 mapping.address,
@@ -317,7 +315,8 @@ class EquipmentDriver:
     ):
         """Modbusの読取・書込要求へ生成値と同一tick内の上書きを反映する。
 
-        書込禁止時はILLEGAL_FUNCTION、値の変換失敗はDEVICE_FAILUREで応答する。
+        レジスターは要求範囲内の変換失敗だけをDEVICE_FAILUREで示す。
+        bit領域は品質情報を持たないため、欠測・変換できない値をFalseとする。
         """
         from pymodbus.constants import ExcCodes
 
@@ -341,41 +340,54 @@ class EquipmentDriver:
                 list(write_values),
             )
             return None
-        try:
-            for mapping in options.registers:
-                if mapping.area != area:
-                    continue
+        bits = area in {"coil", "discrete"}
+        # PyModbus passes the number of packed words for coils and discrete inputs.
+        end = ((address // 16) + count) * 16 if bits else address + count
+        for mapping in options.registers:
+            if mapping.area != area:
+                continue
+            mapping_end = mapping.address + REGISTER_WIDTHS.get(mapping.encoding, 1)
+            if mapping_end <= address or end <= mapping.address:
+                continue
+            try:
                 values = encode_register(
                     self.values[device].get(mapping.field), mapping
                 )
-                if area in {"coil", "discrete"}:
-                    # PyModbusは分かれたbit領域を内部でワードに詰めるため、bit位置を補正する。
-                    for i, value in enumerate(values):
-                        bit = mapping.address + i - start * 16
-                        word = bit // 16
-                        if 0 <= word < len(registers):
-                            registers[word] = (
-                                (registers[word] | (1 << (bit % 16)))
-                                if value
-                                else (registers[word] & ~(1 << (bit % 16)))
-                            )
-                else:
-                    offset = mapping.address - start
-                    if 0 <= offset and offset + len(values) <= len(registers):
-                        registers[offset : offset + len(values)] = values
-            for (d, a, addr), (tick, values) in self.overrides.items():
-                if (
-                    d == device
-                    and a == area
-                    and tick == self.c.tick
-                    and area not in {"coil", "discrete"}
-                ):
-                    registers[addr - start : addr - start + len(values)] = (
-                        values
-                    )
-        except (ValueError, TypeError, OverflowError, struct.error):
-            return ExcCodes.DEVICE_FAILURE
+            except (ValueError, TypeError, OverflowError, struct.error):
+                if not bits:
+                    return ExcCodes.DEVICE_FAILURE
+                values = [False]
+            self._write_response_values(
+                registers, start, address, end, mapping.address, values, bits
+            )
+
+        for (d, a, addr), (tick, values) in self.overrides.items():
+            if d == device and a == area and tick == self.c.tick:
+                self._write_response_values(
+                    registers, start, address, end, addr, values, bits
+                )
         return None
+
+    @staticmethod
+    def _write_response_values(registers, start, address, end, origin, values, bits):
+        """バックエンドが共有するバッファのうち、読取要求と重なる部分だけを更新する。"""
+        first = max(address, origin)
+        stop = min(end, origin + len(values))
+        if first >= stop:
+            return
+        if bits:
+            for position in range(first, stop):
+                word, bit = divmod(position, 16)
+                index = word - start
+                mask = 1 << bit
+                if values[position - origin]:
+                    registers[index] |= mask
+                else:
+                    registers[index] &= ~mask
+        else:
+            registers[first - start : stop - start] = values[
+                first - origin : stop - origin
+            ]
 
     async def step(self, tick):
         """設備値を更新し、停止期間とOPC UAの品質異常を模擬する。"""

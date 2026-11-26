@@ -34,8 +34,10 @@
         "${BIND_IP:-127.0.0.1}:${MODBUS_PUBLIC_PORT:-3646}:1502"
       ],
       "environment": {
+        "TZ": "${TZ:-Asia/Tokyo}",
         "DATA_DIR": "/data",
-        "MIN_AVAILABLE_GIB": "${MIN_AVAILABLE_GIB:-6}",
+        "APP_PORT": "${APP_PORT}",
+        "MIN_AVAILABLE_GIB": "${MIN_AVAILABLE_GIB:-1}",
         "PUBLIC_OPC_PORT": "${OPC_PUBLIC_PORT:-3645}",
         "PUBLIC_MODBUS_PORT": "${MODBUS_PUBLIC_PORT:-3646}"
       },
