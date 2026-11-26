@@ -35,7 +35,7 @@ ssh -N -L 3640:127.0.0.1:3640 user@vm-address
 docker compose config --quiet
 docker compose up -d --build
 docker compose ps
-curl -fsS http://127.0.0.1:3640/healthz
+curl -fsS --retry 12 --retry-connrefused --retry-delay 1 --max-time 5 http://127.0.0.1:3640/healthz
 curl -fsS http://127.0.0.1:3640/api/state
 ```
 
@@ -54,9 +54,13 @@ docker compose -f compose.yaml -f compose.lakehouse-network.yaml config --quiet
 docker compose -f compose.yaml -f compose.lakehouse-network.yaml up -d --build
 ```
 
-既定のプロジェクト内ネットワークも残ります。共有ネットワーク上では専用の別名 `factory-equipment-simulator` とコンテナ側のポートを使います。共有ネットワーク利用時、OPC UAは `opc.tcp://factory-equipment-simulator:4840/factory/`、Modbusは `factory-equipment-simulator:1502` に接続します。OPC UAで接続先を再解決するクライアントは、公開プロファイルのアドレスも接続経路に合わせます。
+管理画面と操作APIにはログインがありません。ホスト側で `127.0.0.1` にバインドしても、共有ネットワークの参加コンテナは管理画面と操作APIに到達できます。信頼済みの収集・試験サービス専用のネットワークを使います。
+
+既定のプロジェクト内ネットワークも残ります。共有ネットワーク上では専用の別名 `factory-equipment-simulator` とコンテナ側のポートを使います。共有ネットワーク利用時、OPC UAは `opc.tcp://factory-equipment-simulator:4840/factory/`、Modbusは `factory-equipment-simulator:1502` に接続します。VM上のクライアントはVMの公開アドレスとホスト側ポートを使います。待受ポートを独自に変更する場合はComposeのコンテナ側ポートも合わせます。
 
 ## 停止・更新
+
+保存済みデータの取得APIでは前回の公開設定の認証を使います。公開設定の版を特定できず取得APIが503になる場合は、意図した公開設定を選んで手動で始めてください。
 
 画面で発生器またはジョブを停止し、停止・完了を確認してからコンテナを止めます。
 
